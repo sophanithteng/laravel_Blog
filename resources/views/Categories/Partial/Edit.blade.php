@@ -1,4 +1,4 @@
-@extends('layout.backend')
+@extends('layout.Backend')
 
 @section('content')
     @if(Session::has('category_update'))

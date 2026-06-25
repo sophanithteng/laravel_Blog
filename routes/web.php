@@ -1,12 +1,13 @@
 <?php
 
-
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\FrontendController;
 
-Route::get('/', function () {
+// Default Laravel welcome page moved to /welcome
+Route::get('/welcome', function () {
     return view('welcome');
 });
 
@@ -44,12 +45,9 @@ Route::fallback(function () {
 });
 
 Route::resource('categories', CategoryController::class);
-//Route::resource('/product',ProductController::class);
+Route::resource('product', ProductController::class);
+Route::resource('invoices', App\Http\Controllers\InvoicesController::class);
 
-Route::get('/product',[ProductController::class,'index'])->name('product.index');
-Route::get('/product/create',[ProductController::class,'create'])->name('product.create');
-Route::post('/product',[ProductController::class,'store'])->name('product.store');
-Route::get('/product/{product}',[ProductController::class,'show'])->name('product.show');
-Route::delete('/product/{product}',[ProductController::class,'destroy'])->name('product.destroy');
-Route::get('/product/{product}/edit',[ProductController::class,'edit'])->name('product.edit');
-Route::put('/product/{product}',[ProductController::class,'update'])->name('product.update');
+Route::get('/', [FrontendController::class, 'index'])->name('home');
+Route::get('/list', [FrontendController::class, 'list'])->name('frontend.list');
+Route::get('/show/{id}', [FrontendController::class, 'show'])->name('frontend.show');

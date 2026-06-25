@@ -1,4 +1,4 @@
-@extends('layout.backend')
+@extends('layout.Backend')
 @section('content')
 <h1>Category</h1>
 <a class="btn btn-primary" href="{{ route('categories.create') }}">New</a>

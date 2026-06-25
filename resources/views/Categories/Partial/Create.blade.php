@@ -1,4 +1,4 @@
-@extends('layout.backend')
+@extends('layout.Backend')
 
 @section('content')
     <h1>Create category</h1>
