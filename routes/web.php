@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\FrontendController;
 
@@ -21,10 +22,6 @@ Route::get('/post/{slug?}', function ($slug = 'default-post') {
     return "Post slug: $slug";
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
-
 Route::prefix('admin')->group(function () {
     Route::get('/users', function () {
         return 'Admin Users';
@@ -34,14 +31,25 @@ Route::prefix('admin')->group(function () {
     });
 });
 
+Route::get('login', [AuthController::class, 'index'])->name('login');
+Route::post('login', [AuthController::class, 'postLogin'])->name('login.post');
+Route::get('registration', [AuthController::class, 'registration'])->name('register');
+Route::post('registration', [AuthController::class, 'postRegistration'])->name('Register.post');
+Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+
 Route::middleware(['auth'])->group(function () {
-    Route::get('/profile', function () {
-        return 'User Profile';
-    });
+    Route::get('/dashboard', function() {
+        return view('auth.dashboard', ['user' => Auth::user()]);
+    })->name('dashboard');
+
+    Route::get('profile/{user}', [AuthController::class, 'editProfile'])->name('profile.edit');
+    Route::patch('profile/{user}', [AuthController::class, 'updateProfile'])->name('profile.update');
+    Route::get('change-password', [AuthController::class, 'changePasswordForm'])->name('password.form');
+    Route::post('change-password', [AuthController::class, 'changePassword'])->name('change.password');
 });
 
 Route::fallback(function () {
-    return response()->view('404', [], 404);
+    return response('Page Not Found', 404);
 });
 
 Route::resource('categories', CategoryController::class);
@@ -51,3 +59,5 @@ Route::resource('invoices', App\Http\Controllers\InvoicesController::class);
 Route::get('/', [FrontendController::class, 'index'])->name('home');
 Route::get('/list', [FrontendController::class, 'list'])->name('frontend.list');
 Route::get('/show/{id}', [FrontendController::class, 'show'])->name('frontend.show');
+Route::get('/search', [FrontendController::class,'getBySearch']);
+Route::get('/frontend/{category?}', [FrontendController::class,'getByCategory']);

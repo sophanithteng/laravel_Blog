@@ -16,20 +16,31 @@
         object-fit: cover;
         width: 100%;
     }
+    /* Smooth transition for category pills */
+    .category-pill {
+        transition: all 0.2s ease-in-out;
+    }
 </style>
 
 <div class="container py-5">
 
-    <div class="row">
-        <div class="col-12">
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show shadow-sm mb-4" role="alert">
-                    <strong>Success!</strong> {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    @if(isset($categories) && $categories->isNotEmpty())
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+                    <a href="{{ url('/') }}" class="btn btn-outline-secondary rounded-pill px-4 category-pill">
+                        All Products
+                    </a>
+
+                    @foreach ($categories as $category)
+                        <a href="{{ url('/frontend/'.$category->id) }}" class="btn btn-outline-primary rounded-pill px-4 category-pill">
+                            {{ $category->name }}
+                        </a>
+                    @endforeach
                 </div>
-            @endif
+            </div>
         </div>
-    </div>
+    @endif
 
     <div class="row g-4 mb-5">
         @forelse($products as $product)
@@ -51,23 +62,21 @@
 
                         <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
                             <span class="fs-5 fw-bold text-primary">${{ number_format($product->price, 2) }}</span>
-
-                            <a href="{{-- route('add.to.cart', $product->id) --}}" class="btn btn-warning rounded-pill px-3 shadow-sm">
-                                Add to cart
-                            </a>
+                            <a href="#" class="btn btn-warning rounded-pill px-3 shadow-sm">Add to cart</a>
                         </div>
                     </div>
                 </div>
             </div>
         @empty
             <div class="col-12 text-center py-5">
-                <h4 class="text-muted">No products available at the moment.</h4>
+                <h4 class="text-muted">No products found in this category.</h4>
+                <a href="{{ url('/') }}" class="btn btn-outline-primary mt-3">View All Products</a>
             </div>
         @endforelse
     </div>
 
-    <div class="d-flex justify-content-center">
-        {{ $products->links('pagination::bootstrap-5') }}
+    <div class="d-flex justify-content-center mt-4">
+        {{ $products->appends(request()->query())->links('pagination::bootstrap-5') }}
     </div>
 
 </div>
