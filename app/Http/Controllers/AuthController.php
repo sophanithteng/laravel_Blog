@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -49,7 +50,7 @@ class AuthController extends Controller
                         ->withSuccess('You have Successfully loggedin');
         }
 
-        return redirect("login")->withSuccess('Oppes! You have entered invalid credentials');
+        return redirect()->route('login')->with('error', 'Oppes! You have entered invalid credentials');
     }
 
     /**
@@ -68,7 +69,7 @@ class AuthController extends Controller
         $data = $request->all();
         $check = $this->create($data);
 
-        return redirect("login")->withSuccess('Great! You have successfully registered. Please login to continue.');
+        return redirect()->route('login')->with('success', 'Great! You have successfully registered. Please login to continue.');
     }
 
     /**
@@ -93,6 +94,103 @@ class AuthController extends Controller
     public function logout() {
         Auth::logout();
 
-        return Redirect('login');
+        return redirect()->route('login');
+    }
+
+    /* =========================================================
+     * JSON API endpoints for the Flutter app (AuthService).
+     * These use Sanctum tokens instead of the web session above.
+     * Requires: composer require laravel/sanctum, and the User
+     * model must use the Laravel\Sanctum\HasApiTokens trait.
+     * ========================================================= */
+
+    /**
+     * POST /api/register
+     * Matches AuthService.register(name, email, password, passwordConfirmation).
+     */
+    public function apiRegister(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            // Shape matches AuthService._extractError(): checks data['errors'] first.
+            return response()->json([
+                'message' => 'The given data was invalid.',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        $token = $user->createToken('mobile')->plainTextToken;
+
+        return response()->json([
+            'user' => $user,
+            'token' => $token,
+        ], 201);
+    }
+
+    /**
+     * POST /api/login
+     * Matches AuthService.login(email, password).
+     */
+    public function apiLogin(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'The given data was invalid.',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'message' => 'Invalid email or password.',
+            ], 401);
+        }
+
+        $token = $user->createToken('mobile')->plainTextToken;
+
+        return response()->json([
+            'user' => $user,
+            'token' => $token,
+        ], 200);
+    }
+
+    /**
+     * POST /api/logout  (protected by auth:sanctum middleware)
+     * Matches AuthService.logout(), which sends "Authorization: Bearer {token}".
+     */
+    public function apiLogout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Logged out successfully.',
+        ], 200);
+    }
+
+    /**
+     * GET /api/me  (protected by auth:sanctum middleware)
+     * Returns the currently authenticated user, resolved from their token.
+     */
+    public function apiMe(Request $request)
+    {
+        return response()->json($request->user());
     }
 }

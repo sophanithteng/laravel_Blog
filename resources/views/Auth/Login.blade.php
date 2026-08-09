@@ -1,66 +1,70 @@
 @extends('Auth.layout')
 
+@section('title', 'Login')
+
 @section('content')
-<main class="login-form">
-    <div class="cotainer">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">Login</div>
-                    <div class="card-body">
-                        @if(Session::has('success'))
-                        <div class="alert alert-success"><em>{!! session('success') !!}</em>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times</span></button>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card card-outline card-primary">
+                <div class="card-header text-center">
+                    <h4 class="mb-0"><i class="fas fa-sign-in-alt mr-2"></i>Login</h4>
+                </div>
+                <div class="card-body">
+                    @if(Session::has('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {!! session('success') !!}
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
                         </div>
-                        @endif
-                        @if(Session::has('errors'))
-                        <div class="alert alert-danger"><em>{!! $errors->first() !!}</em>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times</span></button>
+                    @endif
+
+                    @if(Session::has('errors'))
+                        <div class="alert alert-danger">{!! $errors->first() !!}</div>
+                    @endif
+
+                    <form action="{{ route('login.post') }}" method="POST">
+                        @csrf
+
+                        <div class="form-group">
+                            <label for="email_address">E-Mail Address</label>
+                            <div class="input-group">
+                                <input type="text" id="email_address" class="form-control" name="email"
+                                       value="{{ old('email') }}" required autofocus>
+                                <div class="input-group-append">
+                                    <div class="input-group-text"><span class="fas fa-envelope"></span></div>
+                                </div>
+                            </div>
+                            @if ($errors->has('email'))
+                                <span class="text-danger">{{ $errors->first('email') }}</span>
+                            @endif
                         </div>
-                        @endif
-                        <form action="{{ route('login.post') }}" method="POST">
-                            @csrf
-                            <div class="form-group row">
-                                <label for="email_address" class="col-md-4 col-form-label text-md-right">E-Mail Address</label>
-                                <div class="col-md-6">
-                                    <input type="text" id="email_address" class="form-control" name="email" required autofocus>
-                                    @if ($errors->has('email'))
-                                    <span class="text-danger">{{ $errors->first('email') }}</span>
-                                    @endif
+
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <div class="input-group">
+                                <input type="password" id="password" class="form-control" name="password" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text"><span class="fas fa-lock"></span></div>
                                 </div>
                             </div>
+                            @if ($errors->has('password'))
+                                <span class="text-danger">{{ $errors->first('password') }}</span>
+                            @endif
+                        </div>
 
-                            <div class="form-group row">
-                                <label for="password" class="col-md-4 col-form-label text-md-right">Password</label>
-                                <div class="col-md-6">
-                                    <input type="password" id="password" class="form-control" name="password" required>
-                                    @if ($errors->has('password'))
-                                    <span class="text-danger">{{ $errors->first('password') }}</span>
-                                    @endif
-                                </div>
+                        <div class="form-group d-flex justify-content-between align-items-center">
+                            <div class="icheck-primary">
+                                <input type="checkbox" id="remember" name="remember" value="1">
+                                <label for="remember" class="mb-0 ml-1">Remember Me</label>
                             </div>
+                            <a href="{{ route('forget.password.get') }}">Reset Password</a>
+                        </div>
 
-                            <div class="form-group row">
-                                <div class="col-md-6 offset-md-4">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" name="remember" value="1"> Remember Me
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    Login
-                                </button>
-                            </div>
-                        </form>
-
-                    </div>
+                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-</main>
+</div>
 @endsection

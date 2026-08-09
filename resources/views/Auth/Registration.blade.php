@@ -1,67 +1,80 @@
-@extends('auth.layout')
+@extends('Auth.layout')
+
+@section('title', 'Register')
 
 @section('content')
-<main class="login-form">
-  <div class="cotainer">
-      <div class="row justify-content-center">
-          <div class="col-md-8">
-              <div class="card">
-                  <div class="card-header">Register</div>
-                  <div class="card-body">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card card-outline card-primary">
+                <div class="card-header text-center">
+                    <h4 class="mb-0"><i class="fas fa-user-plus mr-2"></i>Register</h4>
+                </div>
+                <div class="card-body">
 
-                      <form action="{{ route('Register.post') }}" method="POST">
-                          @csrf
-                          <div class="form-group row">
-                              <label for="name" class="col-md-4 col-form-label text-md-right">Name</label>
-                              <div class="col-md-6">
-                                  <input type="text" id="name" class="form-control" name="name" required autofocus>
-                                  @if ($errors->has('name'))
-                                      <span class="text-danger">{{ $errors->first('name') }}</span>
-                                  @endif
-                              </div>
-                          </div>
+                    <form action="{{ route('register.post') }}" method="POST">
+                        @csrf
 
-                          <div class="form-group row">
-                              <label for="email_address" class="col-md-4 col-form-label text-md-right">E-Mail Address</label>
-                              <div class="col-md-6">
-                                  <input type="text" id="email_address" class="form-control" name="email" required autofocus>
-                                  @if ($errors->has('email'))
-                                      <span class="text-danger">{{ $errors->first('email') }}</span>
-                                  @endif
-                              </div>
-                          </div>
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <div class="input-group">
+                                <input type="text" id="name" class="form-control" name="name" value="{{ old('name') }}" required autofocus>
+                                <div class="input-group-append">
+                                    <div class="input-group-text"><span class="fas fa-user"></span></div>
+                                </div>
+                            </div>
+                            @if ($errors->has('name'))
+                                <span class="text-danger">{{ $errors->first('name') }}</span>
+                            @endif
+                        </div>
 
-                          <div class="form-group row">
-                              <label for="password" class="col-md-4 col-form-label text-md-right">Password</label>
-                              <div class="col-md-6">
-                                  <input type="password" id="password" class="form-control" name="password" required>
-                                  @if ($errors->has('password'))
-                                      <span class="text-danger">{{ $errors->first('password') }}</span>
-                                  @endif
-                              </div>
-                          </div>
+                        <div class="form-group">
+                            <label for="email_address">E-Mail Address</label>
+                            <div class="input-group">
+                                <input type="email" id="email_address" class="form-control" name="email" value="{{ old('email') }}" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text"><span class="fas fa-envelope"></span></div>
+                                </div>
+                            </div>
+                            @if ($errors->has('email'))
+                                <span class="text-danger">{{ $errors->first('email') }}</span>
+                            @endif
+                        </div>
 
-                          <div class="form-group row">
-                              <label for="password_confirmation" class="col-md-4 col-form-label text-md-right">Password Confirm</label>
-                              <div class="col-md-6">
-                                  <input type="password" id="password_confirmation" class="form-control" name="password_confirmation" required>
-                                  @if ($errors->has('password'))
-                                      <span class="text-danger">{{ $errors->first('password_confirmation') }}</span>
-                                  @endif
-                              </div>
-                          </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <div class="input-group">
+                                <input type="password" id="password" class="form-control" name="password" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text"><span class="fas fa-lock"></span></div>
+                                </div>
+                            </div>
+                            @if ($errors->has('password'))
+                                <span class="text-danger">{{ $errors->first('password') }}</span>
+                            @endif
+                        </div>
 
-                          <div class="col-md-6 offset-md-4">
-                              <button type="submit" class="btn btn-primary">
-                                  Register
-                              </button>
-                          </div>
-                      </form>
+                        <div class="form-group">
+                            <label for="password_confirmation">Confirm Password</label>
+                            <div class="input-group">
+                                <input type="password" id="password_confirmation" class="form-control" name="password_confirmation" required>
+                                <div class="input-group-append">
+                                    <div class="input-group-text"><span class="fas fa-lock"></span></div>
+                                </div>
+                            </div>
+                            @if ($errors->has('password_confirmation'))
+                                <span class="text-danger">{{ $errors->first('password_confirmation') }}</span>
+                            @endif
+                        </div>
 
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-</main>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            Register
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection

@@ -14,13 +14,15 @@ class FrontendController extends Controller
      */
     public function index()
     {
-        return view("Frontend.index");
+        $categories = Category::all();
+        $products = Product::orderBy('created_at', 'DESC')->get();
+        return view("Frontend.index", compact('products', 'categories'));
     }
 
     public function list()
     {
         $categories = Category::all();
-        $products = Product::orderBy('created_at', 'DESC')->paginate(3);
+        $products = Product::orderBy('created_at', 'DESC')->paginate(10);
         return view('Frontend.Partial.list', compact('products', 'categories'));
     }
 
@@ -37,11 +39,11 @@ class FrontendController extends Controller
         $keyword = !empty($request->input('keyword')) ? $request->input('keyword') : "";
         if ($keyword != "") {
             return view('Frontend.Partial.search')
-                ->with('products', Product::where('name', 'LIKE', '%' . $keyword . '%')->paginate(2))
+                ->with('products', Product::where('name', 'LIKE', '%' . $keyword . '%')->paginate(10))
                 ->with('keyword', $keyword);
         } else {
             return view('Frontend.Partial.search')
-                ->with('products', Product::paginate(2))
+                ->with('products', Product::paginate(10))
                 ->with('keyword', $keyword);
         }
     }
@@ -51,7 +53,7 @@ class FrontendController extends Controller
         if (!$id) {
             $id = $categories->first()->id;
         }
-        $products = DB::table('products')->where('category_id', $id)->paginate(3);
+        $products = DB::table('products')->where('category_id', $id)->paginate(10);
         return view('Frontend.Partial.category')
             ->with('products', $products)
             ->with('categories', $categories);

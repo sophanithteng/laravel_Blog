@@ -14,6 +14,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="{{asset('css/styles.css')}}" rel="stylesheet" />
+    @stack('styles')
 </head>
 
 <body>
@@ -27,7 +28,7 @@
                     <li class="nav-item"><a class="nav-link active" aria-current="page" href="{{url('/')}}">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{url('/list')}}">Products</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{url('/search')}}">Search</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{url('/frontend')}}">Categories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('frontend.category') }}">Categories</a></li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -41,16 +42,51 @@
                     </li>
                 </ul>
 
+                <ul class="navbar-nav align-items-lg-center">
+                    <li class="nav-item me-lg-3">
+                        <a href="{{ route('cart') }}" class="btn btn-outline-dark">
+                            <i class="bi-cart-fill me-1"></i>
+                            Cart
+                            <span class="badge bg-dark text-white ms-1 rounded-pill">
+                                {{ count((array) session('cart')) }}
+                            </span>
+                        </a>
+                    </li>
 
-                <form class="d-flex">
-                    <a href="{{ route('product.index') }}" class="btn btn-outline-dark">
-                        <i class="bi-cart-fill me-1"></i>
-                        Cart
-                        <span class="badge bg-dark text-white ms-1 rounded-pill">
-                            {{ count((array) session('cart')) }}
-                        </span>
-                    </a>
-                </form>
+                    @guest
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('login') }}">
+                                <i class="bi-box-arrow-in-right me-1"></i> Login
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('register') }}">
+                                <i class="bi-person-plus me-1"></i> Register
+                            </a>
+                        </li>
+                    @else
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarUserDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi-person-circle me-1"></i> {{ Auth::user()->name }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUserDropdown">
+                                <li><a class="dropdown-item" href="{{ route('dashboard') }}"><i class="bi-speedometer2 me-2"></i>Dashboard</a></li>
+                                <li><a class="dropdown-item" href="{{ route('profile.edit', Auth::user()) }}"><i class="bi-person me-2"></i>Update profile</a></li>
+                                <li><a class="dropdown-item" href="{{ route('password.form') }}"><i class="bi-key me-2"></i>Change password</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault(); document.getElementById('frontend-logout-form').submit();">
+                                        <i class="bi-box-arrow-left me-2"></i>Logout
+                                    </a>
+                                    <form id="frontend-logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    @endguest
+                </ul>
             </div>
         </div>
     </nav>
@@ -71,7 +107,7 @@
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Core theme JS-->
-    <script src="{{asset('js/fe.js')}}"></script>
+    <script src="{{asset('js/scripts.js')}}"></script>
     @yield('scripts')
 </body>
 

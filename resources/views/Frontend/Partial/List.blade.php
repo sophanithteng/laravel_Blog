@@ -1,24 +1,123 @@
 @extends('layout.Frontend')
 
-@section('content')
+@push('styles')
 <style>
-    .product-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border-radius: 12px;
+    .custom-product-card {
+        border-radius: 28px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        background-color: #ffffff;
         overflow: hidden;
+        padding: 12px;
     }
-    .product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+
+    .product-image-container {
+        background-color: #f4f4f4;
+        border-radius: 20px;
+        position: relative;
+        padding: 25px 15px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
+
+    .brand-pill {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background-color: #ffffff;
+        border-radius: 20px;
+        padding: 5px 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
     .product-img {
-        height: 220px;
-        object-fit: cover;
-        width: 100%;
+        max-width: 100%;
+        height: 180px;
+        object-fit: contain;
+        margin-bottom: 10px;
+    }
+
+    .carousel-indicators-custom {
+        display: flex;
+        gap: 6px;
+        margin-top: auto;
+    }
+
+    .carousel-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #cbd5e1;
+    }
+
+    .carousel-dot.active {
+        background-color: #22c55e;
+    }
+
+    .product-details {
+        padding: 15px 5px 5px 5px;
+    }
+
+    .badge-bestseller {
+        background-color: #ecfdf5;
+        color: #047857;
+        font-weight: 600;
+        font-size: 0.8rem;
+        padding: 6px 12px;
+        border-radius: 20px;
+    }
+
+    .icon-heart {
+        color: #ef4444;
+        font-size: 1.3rem;
+        cursor: pointer;
+    }
+
+    .product-title {
+        font-weight: 700;
+        font-size: 1.15rem;
+        color: #1f2937;
+        margin: 15px 0;
+        line-height: 1.4;
+    }
+
+    .price-label {
+        font-size: 0.8rem;
+        color: #6b7280;
+        margin-bottom: 2px;
+    }
+
+    .price-amount {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #047857;
+    }
+
+    .btn-buy-now {
+        background-color: #27272a;
+        color: #ffffff;
+        border-radius: 30px;
+        padding: 12px 30px;
+        font-weight: 600;
+        border: none;
+        transition: all 0.2s ease;
+    }
+
+    .btn-buy-now:hover {
+        background-color: #000000;
+        color: #ffffff;
     }
 </style>
+@endpush
 
-<div class="container py-5">
+@section('content')
+<div class="container-fluid mt-4">
 
     <div class="row">
         <div class="col-12">
@@ -31,38 +130,66 @@
         </div>
     </div>
 
-    <div class="row g-4 mb-5">
+    <!-- Product Grid -->
+    <div class="row d-flex align-items-stretch">
         @forelse($products as $product)
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                <div class="card h-100 shadow-sm border-0 product-card">
-                    <a href="{{ url('/show/'.$product->id) }}">
-                        <img src="{{ asset('img/' . $product->image) }}" class="card-img-top product-img" alt="{{ $product->name }}">
+        <div class="col-12 col-sm-6 col-md-4 col-xl-3 d-flex align-items-stretch mb-4">
+
+            <!-- Custom Product Card -->
+            <div class="card custom-product-card w-100">
+
+                <!-- Gray Image Wrapper -->
+                <div class="product-image-container">
+                    <!-- Brand Pill -->
+                    <div class="brand-pill">
+                        <i class="fas fa-check text-dark"></i>
+                    </div>
+
+                    <!-- Product Image -->
+                    <a href="{{ route('frontend.show', $product->id) }}">
+                        <img class="product-img" src="{{ $product->image_url ?? asset('img/' . $product->image) }}" alt="{{ $product->name }}" />
                     </a>
 
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold">
-                            <a href="{{ url('/show/'.$product->id) }}" class="text-decoration-none text-dark">
-                                {{ $product->name }}
-                            </a>
-                        </h5>
-                        <p class="card-text text-muted small flex-grow-1">
-                            {{ Str::limit($product->description, 60, '...') }}
-                        </p>
-
-                        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
-                            <span class="fs-5 fw-bold text-primary">${{ number_format($product->price, 2) }}</span>
-
-                            <a href="{{-- route('add.to.cart', $product->id) --}}" class="btn btn-warning rounded-pill px-3 shadow-sm">
-                                Add to cart
-                            </a>
-                        </div>
+                    <!-- Fake Carousel Dots -->
+                    <div class="carousel-indicators-custom">
+                        <div class="carousel-dot active"></div>
+                        <div class="carousel-dot"></div>
+                        <div class="carousel-dot"></div>
                     </div>
                 </div>
+
+                <!-- Details Section -->
+                <div class="product-details">
+                    <!-- Badges & Wishlist -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge-bestseller">Best Seller</span>
+                        <i class="fas fa-heart icon-heart"></i>
+                    </div>
+
+                    <!-- Title -->
+                    <h5 class="product-title">{{ $product->name }}</h5>
+
+                    <!-- Price and Action -->
+                    <div class="d-flex justify-content-between align-items-end mt-3">
+                        <div>
+                            <div class="price-label">Price</div>
+                            <div class="price-amount">${{ number_format($product->price, 2) }}</div>
+                        </div>
+                        <a href="{{ route('add.to.cart', $product->id) }}" class="btn btn-buy-now">
+                            <i class="bi bi-cart-fill me-1"></i> Add to cart
+                        </a>
+                    </div>
+                </div>
+
             </div>
+
+        </div>
         @empty
-            <div class="col-12 text-center py-5">
-                <h4 class="text-muted">No products available at the moment.</h4>
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle mr-2"></i> No products available yet.
             </div>
+        </div>
         @endforelse
     </div>
 

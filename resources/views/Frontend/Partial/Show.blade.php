@@ -44,9 +44,9 @@
                 <label for="inputQuantity" class="fw-bold px-3 text-secondary">Qty</label>
                 <input class="form-control text-center me-3 qty-input border-0 shadow-sm" id="inputQuantity" type="number" value="1" min="1" />
 
-                <button class="btn btn-warning rounded-pill px-4 py-2 shadow-sm flex-shrink-0 fw-bold text-dark" type="button">
+                <a href="{{ route('add.to.cart', $product->id) }}" class="btn btn-warning rounded-pill px-4 py-2 shadow-sm flex-shrink-0 fw-bold text-dark">
                     <i class="bi bi-cart-fill me-2"></i> Add to cart
-                </button>
+                </a>
             </div>
 
         </div>

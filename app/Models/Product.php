@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Product extends Model
 {
     use HasFactory;
+
     protected $table = 'products';
+
     protected $fillable = [
         'name',
         'price',
@@ -16,14 +18,16 @@ class Product extends Model
         'image',
         'category_id'
     ];
+
+    protected $appends = ['image_url'];
+
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function index()
+    public function getImageUrlAttribute()
     {
-        $products = Product::all();
-        return view('product.index')->with('products', $products);
+        return $this->image ? asset('img/' . $this->image) : null;
     }
 }
